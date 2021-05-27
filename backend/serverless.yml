@@ -26,6 +26,7 @@ provider:
     USER_ID_INDEX: UserIdIndex
     IMAGES_S3_BUCKET: mpmaia-serverless-todo-app-${self:provider.stage}
     SIGNED_URL_EXPIRATION: 300
+    JWKS_URL: https://mpmaia.auth0.com/.well-known/jwks.json
 
   iamRoleStatements:
     - Effect: Allow
