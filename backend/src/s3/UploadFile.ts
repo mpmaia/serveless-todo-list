@@ -24,4 +24,17 @@ export class UploadFile {
       Expires: SIGNED_URL_EXPIRATION
     })
   }
+
+  public async deleteObject(bucket: string, id: string): Promise<boolean> {
+    this.logger.info("deleteObject", id);
+    return new Promise<boolean>((resolve) => {
+      return this.s3.deleteObject({
+        Bucket: bucket,
+        Key: id
+      }, (err) => {
+        this.logger.info("deleteObject result: ", err);
+        resolve(!err);
+      });
+    });
+  }
 }
