@@ -34,10 +34,10 @@ export class TodoDAO {
   }
 
   public async getByUserId(userId: string): Promise<TodoItem[]> {
-    const result = await this.docClient.scan({
+    const result = await this.docClient.query({
       TableName: TODOS_TABLE,
       IndexName: USER_ID_INDEX,
-      FilterExpression: 'userId = :u',
+      KeyConditionExpression: 'userId = :u',
       ExpressionAttributeValues: {
         ':u': userId
       }
