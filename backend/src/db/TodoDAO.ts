@@ -22,11 +22,12 @@ export class TodoDAO {
     return todoItem;
   }
 
-  public async delete(todoId: string): Promise<boolean> {
+  public async delete(userId: string, todoId: string): Promise<boolean> {
     const result = await this.docClient.delete({
       TableName: TODOS_TABLE,
       Key: {
-        todoId
+        todoId,
+        userId
       }
     }).promise()
     this.logger.info("todoDAO delete: ", result);
@@ -46,11 +47,12 @@ export class TodoDAO {
     return result.Items as TodoItem[];
   }
 
-  public async updateTodo(todoId: string, name: string, done: boolean, dueDate: string) : Promise<TodoItem> {
+  public async updateTodo(userId: string, todoId: string, name: string, done: boolean, dueDate: string) : Promise<TodoItem> {
     const response = await this.docClient.update({
       TableName: TODOS_TABLE,
       Key: {
-        todoId
+        todoId,
+        userId
       },
       ExpressionAttributeNames: {
         "#n": "name",
@@ -67,11 +69,12 @@ export class TodoDAO {
     return Converter.output(response.Attributes);
   }
 
-  public async updateAttachmentURL(todoId: string, url: string): Promise<TodoItem> {
+  public async updateAttachmentURL(userId: string, todoId: string, url: string): Promise<TodoItem> {
     const response = await this.docClient.update({
       TableName: TODOS_TABLE,
       Key: {
-        todoId
+        todoId,
+        userId
       },
       UpdateExpression: "SET attachmentUrl=:att",
       ExpressionAttributeValues: {

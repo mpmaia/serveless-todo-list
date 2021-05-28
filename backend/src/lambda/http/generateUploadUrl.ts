@@ -3,7 +3,7 @@ import 'source-map-support/register'
 import { APIGatewayProxyEvent, APIGatewayProxyResult, APIGatewayProxyHandler } from 'aws-lambda'
 import { IMAGES_S3_BUCKET } from '../../utils/env'
 import { createLogger } from '../../utils/logger'
-import { createResponse } from '../utils'
+import { createResponse, getUserId } from '../utils'
 import { TodoDAO } from '../../db/TodoDAO'
 import { UploadFile } from '../../s3/UploadFile'
 
@@ -15,7 +15,7 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
   const todoId = event.pathParameters.todoId;
   const url = uploadFile.getUploadUrl(IMAGES_S3_BUCKET, todoId);
   logger.info("Upload URL: " + url);
-  const updatedItem = await todoDAO.updateAttachmentURL(todoId, `https://${IMAGES_S3_BUCKET}.s3.amazonaws.com/${todoId}`);
+  const updatedItem = await todoDAO.updateAttachmentURL(getUserId(event), todoId, `https://${IMAGES_S3_BUCKET}.s3.amazonaws.com/${todoId}`);
   logger.info("generateUploadUrl: ", updatedItem);
   return createResponse(201, { uploadUrl: url});
 }

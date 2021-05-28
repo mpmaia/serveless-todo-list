@@ -1,7 +1,7 @@
 import 'source-map-support/register'
 
 import { APIGatewayProxyEvent, APIGatewayProxyResult, APIGatewayProxyHandler } from 'aws-lambda'
-import { createResponse } from '../utils'
+import { createResponse, getUserId } from '../utils'
 import { createLogger } from '../../utils/logger'
 import { TodoDAO } from '../../db/TodoDAO'
 
@@ -12,7 +12,7 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
   const todoId = event.pathParameters.todoId
   logger.info("deleteTodo: ", event);
 
-  if(await todoDAO.delete(todoId)) {
+  if(await todoDAO.delete(getUserId(event), todoId)) {
     return createResponse(204);
   } else {
     return createResponse(500);
