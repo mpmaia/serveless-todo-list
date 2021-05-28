@@ -6,6 +6,7 @@ plugins:
   - serverless-iam-roles-per-function
   - serverless-offline
   - serverless-reqvalidator-plugin
+  - serverless-aws-documentation
 
 # Uncomment to enable individual packaging
 # package:
@@ -36,20 +37,20 @@ provider:
       Resource:
         - '*'
 
-  custom:
-    documentation:
-      api:
-        info:
-          version: v1.0.0
-          title: Serverless TODO API
-          description: Serverless TODO application example
-      models:
-        - name: CreateTodoRequest
-          contentType: application/json
-          schema: ${file(requests/CreateTodoRequest.json)}
-        - name: UpdateTodoRequest
-          contentType: application/json
-          schema: ${file(requests/UpdateTodoRequest.json)}
+custom:
+  documentation:
+    api:
+      info:
+        version: v1.0.0
+        title: Serverless TODO API
+        description: Serverless TODO application example
+    models:
+      - name: CreateTodoRequest
+        contentType: application/json
+        schema: ${file(src/requests/CreateTodoRequest.json)}
+      - name: UpdateTodoRequest
+        contentType: application/json
+        schema: ${file(src/requests/UpdateTodoRequest.json)}
 
 functions:
 
