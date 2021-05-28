@@ -18,13 +18,14 @@ export function getUserId(event: APIGatewayProxyEvent): string | null {
   return parseUserId(jwtToken)
 }
 
-export function createResponse(httpCode: number, data: any): APIGatewayProxyResult {
-  return {
+export function createResponse(httpCode: number, data?: any): APIGatewayProxyResult {
+  const response = {
     statusCode: httpCode,
     headers: {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Credentials': true
     },
-    body: JSON.stringify(data)
+    body: data?JSON.stringify(data):null
   }
+  return response;
 }
