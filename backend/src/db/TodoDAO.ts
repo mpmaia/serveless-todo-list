@@ -1,12 +1,15 @@
 import { TodoItem } from '../models/TodoItem'
 import { TODOS_TABLE, USER_ID_INDEX } from '../utils/env'
 import * as AWS from 'aws-sdk'
+import * as AWSXRay from 'aws-xray-sdk'
 import { Converter } from 'aws-sdk/clients/dynamodb'
 import * as winston from 'winston'
 
+const XAWS = AWSXRay.captureAWS(AWS);
+
 export class TodoDAO {
 
-  private docClient = new AWS.DynamoDB.DocumentClient();
+  private docClient = new XAWS.DynamoDB.DocumentClient();
   private logger: winston.Logger;
 
   constructor(logger: winston.Logger) {
