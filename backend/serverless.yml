@@ -5,6 +5,7 @@ plugins:
   - serverless-webpack
   - serverless-iam-roles-per-function
   - serverless-offline
+  - serverless-reqvalidator-plugin
 
 # Uncomment to enable individual packaging
 # package:
@@ -34,6 +35,21 @@ provider:
         - codedeploy:*
       Resource:
         - '*'
+
+  custom:
+    documentation:
+      api:
+        info:
+          version: v1.0.0
+          title: Serverless TODO API
+          description: Serverless TODO application example
+      models:
+        - name: CreateTodoRequest
+          contentType: application/json
+          schema: ${file(requests/CreateTodoRequest.json)}
+        - name: UpdateTodoRequest
+          contentType: application/json
+          schema: ${file(requests/UpdateTodoRequest.json)}
 
 functions:
 
@@ -66,6 +82,12 @@ functions:
           path: todos
           cors: true
           authorizer: Auth
+          reqValidatorName: RequestBodyValidator
+          documentation:
+            summary: Create a new TODO item
+            description: Create a new TODO item
+            requestModels:
+              'application/json': CreateTodoRequest
     iamRoleStatements:
       - Effect: Allow
         Action:
@@ -80,6 +102,12 @@ functions:
           path: todos/{todoId}
           cors: true
           authorizer: Auth
+          reqValidatorName: RequestBodyValidator
+          documentation:
+            summary: Updates a TODO item
+            description: Updates a TODO item
+            requestModels:
+              'application/json': UpdateTodoRequest
     iamRoleStatements:
       - Effect: Allow
         Action:
@@ -131,6 +159,15 @@ resources:
         ResponseType: DEFAULT_4XX
         RestApiId:
           Ref: ApiGatewayRestApi
+
+    RequestBodyValidator:
+      Type: AWS::ApiGateway::RequestValidator
+      Properties:
+        Name: 'request-body-validator'
+        RestApiId:
+          Ref: ApiGatewayRestApi
+        ValidateRequestBody: true
+        ValidateRequestParameters: false
 
     TodosDynamoTable:
       Type: AWS::DynamoDB::Table
