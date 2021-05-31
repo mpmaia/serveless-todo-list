@@ -9,8 +9,12 @@ import { JwtPayload } from '../../auth/JwtPayload'
 import { JWKS_URL } from '../../utils/env'
 import { cache } from 'middy/middlewares'
 import * as middy from 'middy'
+import { MetricClient } from '../../cloudwatch/Metrics'
 
 const logger = createLogger('auth')
+const metric = new MetricClient(logger);
+const METRIC_FAILED = "metric_failed";
+const METRIC_OK = "metric_ok";
 
 // to verify JWT token signature.
 // To get this URL you need to go to an Auth0 page -> Show Advanced Settings -> Endpoints -> JSON Web Key Set
@@ -24,7 +28,7 @@ export const handler = middy(
     try {
       const jwtToken = await verifyToken(event.authorizationToken)
       logger.info('User was authorized', jwtToken)
-
+      metric.sendMetric(METRIC_OK, 1);
       return {
         principalId: jwtToken.sub,
         policyDocument: {
@@ -40,7 +44,7 @@ export const handler = middy(
       }
     } catch (e) {
       logger.error('User not authorized', { error: e.message })
-
+      metric.sendMetric(METRIC_FAILED, 1);
       return {
         principalId: 'user',
         policyDocument: {

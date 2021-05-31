@@ -29,6 +29,7 @@ provider:
     IMAGES_S3_BUCKET: mpmaia-serverless-todo-app-${self:provider.stage}
     SIGNED_URL_EXPIRATION: 300
     JWKS_URL: https://mpmaia.auth0.com/.well-known/jwks.json
+    CLOUDWATCH_NAMESPACE: serverless_todo
 
   iamRoleStatements:
     - Effect: Allow
@@ -56,6 +57,11 @@ functions:
 
   Auth:
     handler: src/lambda/auth/auth0Authorizer.handler
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - cloudwatch:PutMetricData
+        Resource: '*'
 
   GetTodos:
     handler: src/lambda/http/getTodos.handler
